@@ -1,12 +1,16 @@
 import cors from 'cors';
 import express from 'express';
-import cadastro from './controller/cadastroController.js'
+import { getPacientes, postPacientes, putPacientes } from './controller/pacientesController.js'
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 
-app.post('/cadastro', cadastro)
+app.get('/pacientes', getPacientes)
+
+app.post('/pacientes', postPacientes)
+
+app.put('/pacientes/:id', putPacientes)
 
 export default app;
