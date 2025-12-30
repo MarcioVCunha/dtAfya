@@ -1,6 +1,6 @@
-import supabase from '../database/database.js';
+import supabase from '../../database/database.js';
 
-const postConsulta = async (req, res) => {
+const postConsultas = async (req, res) => {
     if (!req.body || typeof req.body !== 'object') {
         return res.status(400).json({
             error: 'Body da requisição inválido ou ausente'
@@ -58,4 +58,4 @@ const postConsulta = async (req, res) => {
 };
 
 
-export { postConsulta }
+export default postConsultas
