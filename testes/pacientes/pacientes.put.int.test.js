@@ -1,13 +1,13 @@
 import { describe, it, expect, afterEach } from 'vitest';
 import request from 'supertest';
-import app from '../src/app.js';
-import supabase from '../src/database/database.js';
+import app from '../../src/app.js';
+import supabase from '../../src/database/database.js';
 
 describe('PUT /pacientes/:id', () => {
     const pacienteValido = {
         nome: 'Paciente Teste',
         telefone: 11999999997,
-        email: 'teste@put.com',
+        email: 'paciente@put.com',
         data_nascimento: '1990-01-01',
         sexo: 'M',
         altura: 1.75,

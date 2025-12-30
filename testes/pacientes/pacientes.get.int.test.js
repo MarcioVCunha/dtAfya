@@ -1,7 +1,7 @@
 import { describe, it, expect, afterEach } from 'vitest';
 import request from 'supertest';
-import app from '../src/app.js';
-import supabase from '../src/database/database.js';
+import app from '../../src/app.js';
+import supabase from '../../src/database/database.js';
 
 describe('GET /pacientes', () => {
     let pacientesCriados = [];
@@ -21,7 +21,7 @@ describe('GET /pacientes', () => {
         const paciente = {
             nome: 'Teste',
             telefone: 11999999999,
-            email: 'teste@get.com',
+            email: 'paciente@get.com',
             data_nascimento: '1990-01-01',
             sexo: 'M',
             altura: 1.75,
