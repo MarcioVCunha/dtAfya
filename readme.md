@@ -26,7 +26,7 @@ Observação: Normalmente, as informações do .env são confidenciais, mas para
 No terminal, execute:
 
 ```
-    npm install
+npm install
 ```
 
 Isso instalará todas as bibliotecas necessárias para o projeto.
@@ -36,7 +36,7 @@ Isso instalará todas as bibliotecas necessárias para o projeto.
 Execute o comando:
 
 ```
-    npm start
+npm start
 ```
 
 O servidor será iniciado na porta definida no .env (por padrão, 4000).
@@ -46,12 +46,14 @@ O servidor será iniciado na porta definida no .env (por padrão, 4000).
 Com o servidor em execução, execute:
 
 ```
-    npm run test
+npm run test
 ```
 
 Isso executará todos os testes do projeto.
 
 Pronto! O ambiente está configurado e o projeto está pronto para uso.
+
+---
 
 # Rotas
 
@@ -64,8 +66,15 @@ Pronto! O ambiente está configurado e o projeto está pronto para uso.
 localhost:4000/pacientes
 ```
 
+### Post
+
+- Rota:
+```
+localhost:4000/pacientes
+```
+
 - Body:
-´´´
+```json
     {
         nome: string,
         telefone: int,
@@ -75,4 +84,4 @@ localhost:4000/pacientes
         altura: float,
         peso: float
     }
-´´´
+```
