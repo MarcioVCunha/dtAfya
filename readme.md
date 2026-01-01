@@ -53,19 +53,20 @@ Isso executará todos os testes do projeto.
 
 Pronto! O ambiente está configurado e o projeto está pronto para uso.
 
-## Rotas
+# Rotas
 
-# Pacientes
+## Pacientes
 
-- Get
+### Get
 
-Rota:
+- Rota:
 ```
 localhost:4000/pacientes
 ```
 
-Body:
-´´´json
+- Body:
+´´´
+    {
         nome: string,
         telefone: int,
         email: string,
@@ -73,4 +74,5 @@ Body:
         sexo: M ou F,
         altura: float,
         peso: float
+    }
 ´´´
