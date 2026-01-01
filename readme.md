@@ -119,3 +119,18 @@ localhost:4000/pacientes/:idPaciente/consultas
 
 idPaciente = int de um paciente cadastrado no banco
 
+### Post
+
+- Rota:
+```
+localhost:4000/pacientes/:idPaciente/consultas
+```
+
+idPaciente = int de um paciente cadastrado no banco
+
+- Body:
+```json
+    {
+        data: string (dd/mm/yyyy),
+    }
+```

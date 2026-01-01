@@ -1,92 +1,100 @@
-// tests/consulta.test.js
-import { describe, it, beforeAll, afterAll, beforeEach, expect } from 'vitest';
+import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import request from 'supertest';
 import app from '../../src/app.js';
 import supabase from '../../src/database/database.js';
 
 describe('POST /consultas', () => {
     let pacienteId;
-    const consultaValida = { data: '12-28-2025' };
+    let consultasCriadas = [];
 
     beforeAll(async () => {
-        const paciente = {
-            nome: 'Paciente Teste',
-            telefone: 11999999996,
-            email: 'consulta@post.com',
-            data_nascimento: '01-01-1990',
-            sexo: 'M',
-            altura: 1.75,
-            peso: 75
-        };
-
         const { data, error } = await supabase
             .from('pacientes')
-            .insert([paciente])
+            .insert([{
+                nome: 'Paciente Consulta',
+                telefone: 11999999994,
+                email: 'consulta@post.com',
+                data_nascimento: '1990-01-01',
+                sexo: 'M',
+                altura: 1.75,
+                peso: 75
+            }])
             .select();
 
         if (error) throw error;
-
         pacienteId = data[0].id;
-        consultaValida.paciente_id = pacienteId;
-    });
-
-    beforeEach(async () => {
-        await supabase
-            .from('consultas')
-            .delete()
-            .or(
-                `data.eq.${consultaValida.data},paciente_id.eq.${pacienteId}`
-            );
-    });
-
-    it('deve cadastrar uma consulta com sucesso', async () => {
-        const response = await request(app)
-            .post('/consultas')
-            .send(consultaValida);
-
-        expect(response.status).toBe(201);
-        expect(response.body).toHaveProperty('message', 'Consulta cadastrada com sucesso');
-        expect(response.body.paciente).toHaveProperty('paciente_id', pacienteId);
-    });
-
-    it('não deve cadastrar consulta duplicada na mesma data', async () => {
-        await request(app).post('/consultas').send(consultaValida);
-
-        const response = await request(app)
-            .post('/consultas')
-            .send(consultaValida);
-
-        expect(response.status).toBe(409);
-        expect(response.body.error).toMatch(/consulta/i);
-    });
-
-    it('deve retornar 400 se faltar campo obrigatório', async () => {
-        const response = await request(app)
-            .post('/consultas')
-            .send({ data: '12-28-2025' });
-
-        expect(response.status).toBe(400);
-        expect(response.body.error).toMatch(/obrigatórios/i);
-    });
-
-    it('deve retornar 400 se body estiver ausente ou inválido', async () => {
-        const response = await request(app)
-            .post('/consultas')
-            .send(null);
-
-        expect(response.status).toBe(400);
-        expect(response.body.error).toMatch(/body/i);
     });
 
     afterAll(async () => {
-        await supabase
-            .from('consultas')
-            .delete()
-            .or(`paciente_id.eq.${pacienteId}`);
+        if (consultasCriadas.length > 0) {
+            await supabase
+                .from('consultas')
+                .delete()
+                .in('id', consultasCriadas);
+
+            consultasCriadas = [];
+        }
 
         await supabase
             .from('pacientes')
             .delete()
             .eq('id', pacienteId);
+    });
+
+    it('deve cadastrar consulta com sucesso', async () => {
+        const res = await request(app)
+            .post(`/pacientes/${pacienteId}/consultas`)
+            .send({
+                data: '01/10/2025'
+            });
+
+        expect(res.status).toBe(201);
+        expect(res.body.consulta.data).toBe('2025-10-01');
+
+        consultasCriadas.push(res.body.consulta.id);
+    });
+
+    it('deve retornar 400 se paciente_id não for inteiro', async () => {
+        const res = await request(app)
+            .post(`/pacientes/ID/consultas`)
+            .send({
+                data: '10/01/2025'
+            });
+
+        expect(res.status).toBe(400);
+        expect(res.body.error).toMatch(/id/i);
+    });
+
+    it('deve retornar 404 se paciente_id não existir no banco', async () => {
+        const res = await request(app)
+            .post(`/pacientes/999999/consultas`)
+            .send({
+                data: '10/01/2025'
+            });
+
+        expect(res.status).toBe(404);
+        expect(res.body.error).toBe('ID não cadastrado no banco');
+    });
+
+    it('deve retornar 400 se data for inválida', async () => {
+        const res = await request(app)
+            .post(`/pacientes/${pacienteId}/consultas`)
+            .send({
+                data: 'data-invalida'
+            });
+
+        expect(res.status).toBe(400);
+        expect(res.body.error).toMatch(/data/i);
+    });
+
+    it('deve retornar 409 se consulta já existir na mesma data', async () => {
+        const res = await request(app)
+            .post(`/pacientes/${pacienteId}/consultas`)
+            .send({
+                data: '01/10/2025'
+            });
+
+        expect(res.status).toBe(409);
+        expect(res.body.error).toMatch(/consulta/i);
     });
 });
