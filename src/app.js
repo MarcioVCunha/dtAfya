@@ -23,6 +23,6 @@ app.put('/pacientes/:id', putPacientes)
 app.put('/pacientes/:pacienteId/consultas/:consultaId', putConsultas)
 app.put('/observacoes/:id', putObservacoes)
 
-app.delete('/consultas/:id', deleteConsultas)
+app.delete('/pacientes/consultas/:consultaId', deleteConsultas)
 
 export default app;

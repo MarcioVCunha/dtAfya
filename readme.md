@@ -90,10 +90,10 @@ localhost:4000/pacientes
 
 - Rota:
 ```
-localhost:4000/pacientes/:idPaciente
+localhost:4000/pacientes/:id
 ```
 
-idPaciente = int de um paciente cadastrado no banco
+id = int de um paciente cadastrado no banco
 
 - Body:
 ```json
@@ -114,19 +114,19 @@ idPaciente = int de um paciente cadastrado no banco
 
 - Rota:
 ```
-localhost:4000/pacientes/:idPaciente/consultas
+localhost:4000/pacientes/:pacienteId/consultas
 ```
 
-idPaciente = int de um paciente cadastrado no banco
+pacienteId = int de um paciente cadastrado no banco
 
 ### Post
 
 - Rota:
 ```
-localhost:4000/pacientes/:idPaciente/consultas
+localhost:4000/pacientes/:pacienteId/consultas
 ```
 
-idPaciente = int de um paciente cadastrado no banco
+pacienteId = int de um paciente cadastrado no banco
 
 - Body:
 ```json
@@ -139,10 +139,27 @@ idPaciente = int de um paciente cadastrado no banco
 
 - Rota:
 ```
-localhost:4000/pacientes/:idPaciente/consultas
+localhost:4000/pacientes/:pacienteId/consultas/:consultaId
 ```
 
-idPaciente = int de um paciente cadastrado no banco
+pacienteId = int de um paciente cadastrado no banco
+consultaId = int de uma consulta cadastrado no banco
+
+- Body:
+```json
+    {
+        data: string (dd/mm/yyyy),
+    }
+```
+
+### Delete
+
+- Rota:
+```
+localhost:4000/pacientes/consultas/:consultaId
+```
+
+consultaId = int de uma consulta cadastrado no banco
 
 - Body:
 ```json

@@ -2,9 +2,9 @@ import supabase from '../../database/database.js';
 
 const deleteConsultas = async (req, res) => {
     try {
-        const { id } = req.params;
+        const { consultaId } = req.params;
 
-        if (!id || isNaN(Number(id))) {
+        if (!consultaId || isNaN(Number(consultaId))) {
             return res.status(400).json({
                 error: 'ID inválido'
             });
@@ -13,7 +13,7 @@ const deleteConsultas = async (req, res) => {
         const { data: consulta, error: erroBusca } = await supabase
             .from('consultas')
             .select('id')
-            .eq('id', id)
+            .eq('id', consultaId)
             .single();
 
         if (erroBusca || !consulta) {
@@ -25,7 +25,7 @@ const deleteConsultas = async (req, res) => {
         const { error } = await supabase
             .from('consultas')
             .delete()
-            .eq('id', id);
+            .eq('id', consultaId);
 
         if (error) {
             console.error(error);

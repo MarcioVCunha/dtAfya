@@ -3,7 +3,7 @@ import request from 'supertest';
 import app from '../../src/app.js';
 import supabase from '../../src/database/database.js';
 
-describe('DELETE /consultas/:id', () => {
+describe('DELETE /pacientes/consultas/:consultaId', () => {
     let pacienteId;
     let consultaId;
 
@@ -26,7 +26,6 @@ describe('DELETE /consultas/:id', () => {
 
         pacienteId = paciente.id;
 
-        // 🔹 Cria consulta
         const { data: consulta, error: consultaError } = await supabase
             .from('consultas')
             .insert([{
@@ -40,31 +39,7 @@ describe('DELETE /consultas/:id', () => {
 
         consultaId = consulta.id;
     });
-
-    it('deve deletar uma consulta com sucesso', async () => {
-        const response = await request(app)
-            .delete(`/consultas/${consultaId}`);
-
-        expect(response.status).toBe(200);
-        expect(response.body.message).toBe('Consulta deletada com sucesso');
-    });
-
-    it('deve retornar 404 ao tentar deletar consulta inexistente', async () => {
-        const response = await request(app)
-            .delete('/consultas/999999');
-
-        expect(response.status).toBe(404);
-        expect(response.body.error).toBe('Consulta não encontrada');
-    });
-
-    it('deve retornar 400 se o ID for inválido', async () => {
-        const response = await request(app)
-            .delete('/consultas/abc');
-
-        expect(response.status).toBe(400);
-        expect(response.body.error).toBe('ID inválido');
-    });
-
+    
     afterAll(async () => {
         if (pacienteId) {
             await supabase
@@ -72,5 +47,29 @@ describe('DELETE /consultas/:id', () => {
                 .delete()
                 .eq('id', pacienteId);
         }
+    });
+
+    it('deve deletar uma consulta com sucesso', async () => {
+        const response = await request(app)
+            .delete(`/pacientes/consultas/${consultaId}`);
+
+        expect(response.status).toBe(200);
+        expect(response.body.message).toBe('Consulta deletada com sucesso');
+    });
+
+    it('deve retornar 404 ao tentar deletar consulta inexistente', async () => {
+        const response = await request(app)
+            .delete('/pacientes/consultas/999999');
+
+        expect(response.status).toBe(404);
+        expect(response.body.error).toBe('Consulta não encontrada');
+    });
+
+    it('deve retornar 400 se o ID for inválido', async () => {
+        const response = await request(app)
+            .delete('/pacientes/consultas/abc');
+
+        expect(response.status).toBe(400);
+        expect(response.body.error).toBe('ID inválido');
     });
 });
