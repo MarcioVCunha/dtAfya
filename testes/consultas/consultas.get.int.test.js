@@ -3,7 +3,7 @@ import request from 'supertest';
 import app from '../../src/app.js';
 import supabase from '../../src/database/database.js';
 
-describe('GET /consultas', () => {
+describe('GET pacieentes/idPaciente/consultas', () => {
     let pacienteId;
     let consultaId;
 
@@ -14,38 +14,28 @@ describe('GET /consultas', () => {
                 nome: 'Paciente Teste',
                 telefone: 11999999995,
                 email: 'consulta@get.com',
-                data_nascimento: '1990-01-01',
+                data_nascimento: '01/01/1990',
                 sexo: 'M',
                 altura: 1.75,
                 peso: 75
             }])
-            .select()
-            .single();
+            .select();
 
         if (pacienteError) throw pacienteError;
 
-        pacienteId = paciente.id;
+        pacienteId = paciente[0].id;
 
         const { data: consulta, error: consultaError } = await supabase
             .from('consultas')
             .insert([{
                 paciente_id: pacienteId,
-                data: '1999-12-29'
+                data: '1999-12-20'
             }])
             .select()
-            .single();
 
         if (consultaError) throw consultaError;
 
-        consultaId = consulta.id;
-    });
-
-    it('deve retornar consultas cadastradas', async () => {
-        const res = await request(app).get('/consultas');
-
-        expect(res.status).toBe(201);
-        expect(Array.isArray(res.body.consultas)).toBe(true);
-        expect(res.body.consultas.length).toBeGreaterThan(0);
+        consultaId = consulta[0].id;
     });
 
     afterAll(async () => {
@@ -62,5 +52,20 @@ describe('GET /consultas', () => {
                 .delete()
                 .eq('id', pacienteId);
         }
+    });
+
+    it('deve retornar consultas cadastradas', async () => {
+        const res = await request(app).get(`/pacientes/${pacienteId}/consultas`);
+
+        expect(res.status).toBe(201);
+        expect(Array.isArray(res.body.consultas)).toBe(true);
+        expect(res.body.consultas.length).toBeGreaterThan(0);
+    });
+
+    it('deve retornar 400 caso id invalido', async () => {
+        const res = await request(app).get(`/pacientes/ID_INVALIDO/consultas`);
+
+        expect(res.status).toBe(400);
+        expect(res.body.error).toBe('ID inválido');
     });
 });

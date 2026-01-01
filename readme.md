@@ -93,9 +93,7 @@ localhost:4000/pacientes
 localhost:4000/pacientes/:idPaciente
 ```
 
-```
 idPaciente = int de um paciente cadastrado no banco
-```
 
 - Body:
 ```json
@@ -109,3 +107,15 @@ idPaciente = int de um paciente cadastrado no banco
         peso: float
     }
 ```
+
+## Consultas
+
+### Get
+
+- Rota:
+```
+localhost:4000/pacientes/:idPaciente/consultas
+```
+
+idPaciente = int de um paciente cadastrado no banco
+

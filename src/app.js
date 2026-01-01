@@ -12,11 +12,11 @@ app.use(cors());
 app.use(express.json());
 
 app.get('/pacientes', getPacientes)
-app.get('/consultas', getConsultas)
+app.get('/pacientes/:pacienteId/consultas', getConsultas)
 app.get('/observacoes/:consultaId', getObservacoes)
 
 app.post('/pacientes', postPacientes)
-app.post('/consultas', postConsultas)
+app.post('/pacientes/:pacienteId/consultas', postConsultas)
 app.post('/observacoes/:consultaId', postObservacoes)
 
 app.put('/pacientes/:id', putPacientes)
