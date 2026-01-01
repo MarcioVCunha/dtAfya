@@ -3,7 +3,7 @@ import request from 'supertest';
 import app from '../../src/app.js';
 import supabase from '../../src/database/database.js';
 
-describe('GET pacieentes/idPaciente/consultas', () => {
+describe('GET pacientes/idPaciente/consultas', () => {
     let pacienteId;
     let consultaId;
 

@@ -3,7 +3,7 @@ import request from 'supertest';
 import app from '../../src/app.js';
 import supabase from '../../src/database/database.js';
 
-describe('POST /consultas/:consultaId/observacoes', () => {
+describe('POST /pacientes/consultas/:consultaId/observacoes', () => {
     let pacienteId;
     let consultaId;
     let observacaoId;
@@ -37,19 +37,6 @@ describe('POST /consultas/:consultaId/observacoes', () => {
         consultaId = consulta.id;
     });
 
-    it('deve criar uma observação com sucesso', async () => {
-        const res = await request(app)
-            .post(`/observacoes/${consultaId}`)
-            .send({
-                observacao: 'Paciente relata dor de cabeça'
-            });
-
-        expect(res.status).toBe(201);
-        expect(res.body.observacao.observacao).toBeTruthy();
-
-        observacaoId = res.body.observacao.id;
-    });
-
     afterAll(async () => {
         if (observacaoId) {
             await supabase.from('observacoes').delete().eq('id', observacaoId);
@@ -60,5 +47,40 @@ describe('POST /consultas/:consultaId/observacoes', () => {
         if (pacienteId) {
             await supabase.from('pacientes').delete().eq('id', pacienteId);
         }
+    });
+
+    it('deve criar uma observação com sucesso', async () => {
+        const res = await request(app)
+            .post(`/pacientes/consultas/${consultaId}/observacoes`)
+            .send({
+                observacao: 'Paciente relata dor de cabeça'
+            });
+
+        expect(res.status).toBe(201);
+        expect(res.body.observacao.observacao).toBeTruthy();
+
+        observacaoId = res.body.observacao.id;
+    });
+
+    it('deve retornar 400 se consulta_id não for inteiro', async () => {
+        const res = await request(app)
+            .post(`/pacientes/consultas/id/observacoes`)
+            .send({
+                observacao: 'Paciente relata dor de cabeça'
+            });
+
+        expect(res.status).toBe(400);
+        expect(res.body.error).toMatch(/id/i);
+    });
+
+        it('deve retornar 400 se observação não for valida', async () => {
+        const res = await request(app)
+            .post(`/pacientes/consultas/id/observacoes`)
+            .send({
+                observacao: 123
+            });
+
+        expect(res.status).toBe(400);
+        expect(res.body.error).toMatch(/id/i);
     });
 });

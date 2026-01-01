@@ -3,7 +3,7 @@ import request from 'supertest';
 import app from '../../src/app.js';
 import supabase from '../../src/database/database.js';
 
-describe('GET /observacoes/:consultaId', () => {
+describe('GET /pacientes/consultas/:consultaId/observacoes', () => {
     let pacienteId;
     let consultaId;
     let observacaoId;
@@ -48,18 +48,34 @@ describe('GET /observacoes/:consultaId', () => {
         observacaoId = observacao.id;
     });
 
+    afterAll(async () => {
+        await supabase.from('observacoes').delete().eq('id', observacaoId);
+        await supabase.from('consultas').delete().eq('id', consultaId);
+        await supabase.from('pacientes').delete().eq('id', pacienteId);
+    });
+
+
     it('deve retornar observações da consulta', async () => {
         const res = await request(app)
-            .get(`/observacoes/${consultaId}`);
+            .get(`/pacientes/consultas/${consultaId}/observacoes`);
 
         expect(res.status).toBe(200);
         expect(Array.isArray(res.body.observacoes)).toBe(true);
         expect(res.body.observacoes.length).toBeGreaterThan(0);
     });
 
-    afterAll(async () => {
-        await supabase.from('observacoes').delete().eq('id', observacaoId);
-        await supabase.from('consultas').delete().eq('id', consultaId);
-        await supabase.from('pacientes').delete().eq('id', pacienteId);
+    it('deve retornar 400 caso id invalido', async () => {
+        const res = await request(app).get(`/pacientes/consultas/ID_INVALIDO/observacoes`);
+
+        expect(res.status).toBe(400);
+        expect(res.body.error).toBe('ID inválido');
     });
+
+    it('deve retornar 404 caso consulta não cadastrada', async () => {
+        const res = await request(app).get(`/pacientes/consultas/99999999/observacoes`);
+
+        expect(res.status).toBe(404);
+        expect(res.body.error).toBe('Consulta não encontrada');
+    });
+
 });

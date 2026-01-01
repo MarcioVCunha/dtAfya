@@ -2,10 +2,10 @@ import supabase from '../../database/database.js';
 
 const putObservacoes = async (req, res) => {
     try {
-        const { id } = req.params;
+        const { observacaoId } = req.params;
         const { observacao } = req.body;
 
-        if (!id || isNaN(Number(id))) {
+        if (!observacaoId || isNaN(Number(observacaoId))) {
             return res.status(400).json({
                 error: 'ID inválido'
             });
@@ -20,7 +20,7 @@ const putObservacoes = async (req, res) => {
         const { data: existente, error: erroBusca } = await supabase
             .from('observacoes')
             .select('id')
-            .eq('id', id)
+            .eq('id', observacaoId)
             .single();
 
         if (erroBusca || !existente) {
@@ -32,7 +32,7 @@ const putObservacoes = async (req, res) => {
         const { data, error } = await supabase
             .from('observacoes')
             .update({ observacao })
-            .eq('id', id)
+            .eq('id', observacaoId)
             .select()
             .single();
 

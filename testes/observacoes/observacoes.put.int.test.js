@@ -3,7 +3,7 @@ import request from 'supertest';
 import app from '../../src/app.js';
 import supabase from '../../src/database/database.js';
 
-describe('PUT /observacoes/:id', () => {
+describe('PUT /pacientes/consultas/observacoes/:observacaoId', () => {
     let pacienteId;
     let consultaId;
     let observacaoId;
@@ -48,9 +48,15 @@ describe('PUT /observacoes/:id', () => {
         observacaoId = observacao.id;
     });
 
+    afterAll(async () => {
+        await supabase.from('observacoes').delete().eq('id', observacaoId);
+        await supabase.from('consultas').delete().eq('id', consultaId);
+        await supabase.from('pacientes').delete().eq('id', pacienteId);
+    });
+
     it('deve atualizar uma observação com sucesso', async () => {
         const res = await request(app)
-            .put(`/observacoes/${observacaoId}`)
+            .put(`/pacientes/consultas/observacoes/${observacaoId}`)
             .send({
                 observacao: 'Observação atualizada'
             });
@@ -61,7 +67,7 @@ describe('PUT /observacoes/:id', () => {
 
     it('deve retornar 404 se a observação não existir', async () => {
         const res = await request(app)
-            .put('/observacoes/999999')
+            .put('/pacientes/consultas/observacoes/9999999999')
             .send({
                 observacao: 'Teste'
             });
@@ -69,9 +75,15 @@ describe('PUT /observacoes/:id', () => {
         expect(res.status).toBe(404);
     });
 
-    afterAll(async () => {
-        await supabase.from('observacoes').delete().eq('id', observacaoId);
-        await supabase.from('consultas').delete().eq('id', consultaId);
-        await supabase.from('pacientes').delete().eq('id', pacienteId);
+    it('deve retornar 400 se a observacao_id não for valido', async () => {
+        const res = await request(app)
+            .put('/pacientes/consultas/observacoes/id')
+            .send({
+                observacao: 'Teste'
+            });
+
+        expect(res.status).toBe(400);
     });
+
+    
 });

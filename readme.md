@@ -167,3 +167,46 @@ consultaId = int de uma consulta cadastrado no banco
         data: string (dd/mm/yyyy),
     }
 ```
+
+## Observações
+
+### Get
+
+- Rota:
+```
+localhost:4000/pacientes/consultas/:consultaId/observacoes
+```
+
+consultaId = int de uma consulta cadastrada no banco
+
+### Post
+
+- Rota:
+```
+localhost:4000/pacientes/consultas/:consultaId/observacoes
+```
+
+consultaId = int de uma consulta cadastrada no banco
+
+- Body:
+```json
+    {
+        observacao: string
+    }
+```
+
+### Put
+
+- Rota:
+```
+localhost:4000/pacientes/consultas/observacoes/:observacaoId
+```
+
+observacaoId = int de uma observacao cadastrada no banco
+
+- Body:
+```json
+    {
+        observacao: string
+    }
+```

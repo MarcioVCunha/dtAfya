@@ -6,7 +6,19 @@ const getObservacoes = async (req, res) => {
 
         if (!consultaId || isNaN(Number(consultaId))) {
             return res.status(400).json({
-                error: 'ID da consulta inválido'
+                error: 'ID inválido'
+            });
+        }
+
+        const { data: consulta, error: erroBusca } = await supabase
+            .from('consultas')
+            .select('id')
+            .eq('id', consultaId)
+            .single();
+
+        if (erroBusca || !consulta) {
+            return res.status(404).json({
+                error: 'Consulta não encontrada'
             });
         }
 
