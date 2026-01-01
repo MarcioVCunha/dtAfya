@@ -20,7 +20,7 @@ app.post('/pacientes/:pacienteId/consultas', postConsultas)
 app.post('/observacoes/:consultaId', postObservacoes)
 
 app.put('/pacientes/:id', putPacientes)
-app.put('/consultas/:id', putConsultas)
+app.put('/pacientes/:pacienteId/consultas/:consultaId', putConsultas)
 app.put('/observacoes/:id', putObservacoes)
 
 app.delete('/consultas/:id', deleteConsultas)

@@ -1,107 +1,114 @@
-import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import { describe, it, beforeAll, afterEach, afterAll, expect } from 'vitest';
 import request from 'supertest';
 import app from '../../src/app.js';
 import supabase from '../../src/database/database.js';
 
-describe('PUT /consultas/:id', () => {
+describe('PUT /pacientes/:pacientesId/consultas/:consultasId', () => {
     let pacienteId;
     let consultaId;
 
     beforeAll(async () => {
-        const { data: paciente, error: pacienteError } = await supabase
+        const { data, error } = await supabase
             .from('pacientes')
             .insert([{
                 nome: 'Paciente PUT Consulta',
-                telefone: 11999999994,
+                telefone: 11999999993,
                 email: 'consultas@put.com',
                 data_nascimento: '1990-01-01',
                 sexo: 'M',
                 altura: 1.80,
                 peso: 80
             }])
-            .select()
-            .single();
+            .select();
 
-        if (pacienteError) throw pacienteError;
+        if (error) throw error;
+        pacienteId = data[0].id;
 
-        pacienteId = paciente.id;
-
-        const { data: consulta, error: consultaError } = await supabase
-            .from('consultas')
+        const { data: consulta, error: erroConsulta } = await supabase
+            .from(`consultas`)
             .insert([{
-                paciente_id: pacienteId,
-                data: '1999-12-20'
+                data: '10/01/1997',
             }])
-            .select()
-            .single();
+            .select();
 
-        if (consultaError) throw consultaError;
-
-        consultaId = consulta.id;
-    });
-
-    it('deve atualizar uma consulta com sucesso', async () => {
-        const response = await request(app)
-            .put(`/consultas/${consultaId}`)
-            .send({
-                paciente_id: pacienteId,
-                data: '1999-12-30'
-            });
-
-        expect(response.status).toBe(200);
-        expect(response.body.message).toBe('Consulta atualizada com sucesso');
-        expect(response.body.consulta.data).toBe('1999-12-30');
-        expect(response.body.message).toBe('Consulta atualizada com sucesso');
-    });
-
-    it('deve retornar 404 se a consulta não existir', async () => {
-        const response = await request(app)
-            .put('/consultas/999999')
-            .send({
-                paciente_id: pacienteId,
-                data: '1999-12-30'
-            });
-
-        expect(response.status).toBe(404);
-        expect(response.body.error).toBe('Consulta não encontrada');
-    });
-
-    it('deve retornar 400 se body for inválido', async () => {
-        const response = await request(app)
-            .put(`/consultas/${consultaId}`)
-            .send({
-                paciente_id: pacienteId
-            });
-
-        expect(response.status).toBe(400);
-        expect(response.body.error).toBe('Campos obrigatórios não preenchidos');
-    });
-
-    it('deve retornar 400 se o ID for inválido', async () => {
-        const response = await request(app)
-            .put('/consultas/abc')
-            .send({
-                paciente_id: pacienteId,
-                data: '1999-12-30'
-            });
-
-        expect(response.status).toBe(400);
-        expect(response.body.error).toBe('ID inválido');
+        if (erroConsulta) throw erroConsulta;
+        consultaId = consulta[0].id;
     });
 
     afterAll(async () => {
-        if (consultaId) {
-            await supabase
-                .from('consultas')
-                .delete()
-                .eq('id', consultaId);
-        }
+        await supabase
+            .from('consultas')
+            .delete()
+            .eq('id', consultaId);
 
-        if (pacienteId) {
-            await supabase
-                .from('pacientes')
-                .delete()
-                .eq('id', pacienteId);
-        }
+        await supabase
+            .from('pacientes')
+            .delete()
+            .eq('id', pacienteId);
+    });
+
+    it('deve atualizar a consulta com sucesso', async () => {
+        const res = await request(app)
+            .put(`/pacientes/${pacienteId}/consultas/${consultaId}`)
+            .send({
+                data: '11/01/1997',
+            });
+
+        expect(res.status).toBe(200);
+        expect(res.body.consulta.data).toBe('1997-01-11');
+        expect(res.body.consulta.paciente_id).toBe(pacienteId);
+    });
+
+    it('deve retornar 400 se body estiver ausente ou inválido', async () => {
+        const res = await request(app)
+            .put(`/pacientes/${pacienteId}/consultas/${consultaId}`)
+            .send(null);
+
+        expect(res.status).toBe(400);
+        expect(res.body.error).toMatch(/body/i);
+    });
+
+    it('deve retornar 400 se paciente_id não for inteiro', async () => {
+        const res = await request(app)
+            .put(`/pacientes/abc/consultas/${consultaId}`)
+            .send({
+                data: '11/01/1977'
+            });
+
+        expect(res.status).toBe(400);
+        expect(res.body.error).toMatch(/id/i);
+    });
+
+    it('deve retornar 400 se paciente_id não for inteiro', async () => {
+        const res = await request(app)
+            .put(`/pacientes/${pacienteId}/consultas/abc`)
+            .send({
+                data: '11/01/1977'
+            });
+
+        expect(res.status).toBe(400);
+        expect(res.body.error).toMatch(/id/i);
+    });
+
+    it('deve retornar 400 se data for inválida', async () => {
+        const res = await request(app)
+            .put(`/pacientes/${pacienteId}/consultas/${consultaId}`)
+            .send({
+                data: 'data-invalida'
+            });
+
+        expect(res.status).toBe(400);
+        expect(res.body.error).toMatch(/data/i);
+    });
+
+    it('deve retornar 404 se consulta não existir', async () => {
+        const res = await request(app)
+            .put(`/pacientes/${pacienteId}/consultas/99999999`)
+            .send({
+                data: '11/01/1997'
+            });
+
+        expect(res.status).toBe(404);
+        expect(res.body.error).toMatch(/não encontrada/i);
     });
 });
