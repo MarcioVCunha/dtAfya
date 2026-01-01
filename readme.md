@@ -46,9 +46,31 @@ O servidor será iniciado na porta definida no .env (por padrão, 4000).
 Com o servidor em execução, execute:
 
 ```
-    npm test
+    npm run test
 ```
 
 Isso executará todos os testes do projeto.
 
 Pronto! O ambiente está configurado e o projeto está pronto para uso.
+
+## Rotas
+
+# Pacientes
+
+- Get
+
+Rota:
+```
+localhost:4000/pacientes
+```
+
+Body:
+´´´json
+        nome: string,
+        telefone: int,
+        email: string,
+        data_nascimento: string (dd/mm/yyyy),
+        sexo: M ou F,
+        altura: float,
+        peso: float
+´´´
