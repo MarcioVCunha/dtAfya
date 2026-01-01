@@ -10,6 +10,14 @@ const getPacientes = async (req, res) => {
         return res.status(500).json({ error: 'Erro ao buscar pacientes' });
     }
 
+    data.forEach((paciente) => {
+        const dataAux = paciente.data_nascimento.split('-')
+
+        const dataFormatada = `${dataAux[2]}/${dataAux[1]}/${dataAux[0]}`
+
+        paciente.data_nascimento = dataFormatada
+    })
+
     return res.status(201).json({
         message: 'Pacientes retornados com sucesso',
         pacientes: data
