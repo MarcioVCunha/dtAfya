@@ -17,6 +17,7 @@ Antes de iniciar, é necessário configurar o arquivo `.env`. Siga os passos aba
     DATABASE_URL=https://dztajxgfvpdqdsfwtrro.supabase.co
     API_KEY=sb_secret_vreIflR2ETy0LQjh9cqCXw_9QCMPNNw
     PORT=4000
+```
 
 Observação: Normalmente, as informações do .env são confidenciais, mas para fins deste desafio, os valores estão disponíveis aqui.
 
